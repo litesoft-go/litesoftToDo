@@ -1,6 +1,9 @@
 package openAPI
 
-import "net/http"
+import (
+	"net/http"
+	"litesoftToDo/utils/validation"
+)
 
 type Response struct {
 	mCode        int
@@ -62,7 +65,10 @@ func NewNotFoundTextResponse(pMessage string) *Response {
 	return NewResponse(http.StatusNotFound, TEXT_PLAIN, pMessage)
 }
 
-func NewFailedTextResponse(err error) *Response {
+func NewFailedResponse(err error) *Response {
+	if validation.IsValidation(err) {
+		return NewInvalidTextResponse(err.Error())
+	}
 	return NewResponse(http.StatusInternalServerError, TEXT_PLAIN, err.Error())
 }
 

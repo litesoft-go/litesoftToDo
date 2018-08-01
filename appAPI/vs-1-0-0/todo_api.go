@@ -44,13 +44,13 @@ func (this Methods) SearchLists(w http.ResponseWriter, r *http.Request) {
 	}
 	zModelLists, err := this.mPersistor.SearchLists(zSearchString, zSkip, zLimit)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	zTodoLists := FromModelTodoLists(zModelLists)
 	zBytes, err := json.Marshal(zTodoLists)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 	} else {
 		openAPI.NewJsonResponseOK(string(zBytes)).ApplyTo(w)
 	}
@@ -65,18 +65,18 @@ func (this Methods) AddList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		openAPI.NewInvalidTextResponse(err.Error()).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	zModelList := zList.ToModelTodoList()
 	zListId, err := this.mPersistor.AddList(zModelList)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	zBytes, err := json.Marshal(&ListCreated{ListId: zListId})
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 	} else {
 		openAPI.NewJsonResponseCreated(string(zBytes)).ApplyTo(w)
 	}
@@ -93,7 +93,7 @@ func (this Methods) GetList(w http.ResponseWriter, r *http.Request) {
 	}
 	zModelList, err := this.mPersistor.GetList(zListId)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	if zModelList == nil {
@@ -103,7 +103,7 @@ func (this Methods) GetList(w http.ResponseWriter, r *http.Request) {
 	zTodoList := FromModelTodoList(zModelList)
 	zBytes, err := json.Marshal(zTodoList)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 	} else {
 		openAPI.NewJsonResponseOK(string(zBytes)).ApplyTo(w)
 	}
@@ -126,13 +126,13 @@ func (this Methods) AddTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		openAPI.NewInvalidTextResponse(err.Error()).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	zModelTask := zTask.ToModelTask()
 	err = this.mPersistor.AddTask(zListId, zModelTask)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	openAPI.NewTextResponseCreated("Task").ApplyTo(w)
@@ -161,13 +161,13 @@ func (this Methods) CompleteTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if err != nil {
-		openAPI.NewInvalidTextResponse(err.Error()).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 
 	zModelList, err := this.mPersistor.GetList(zListId)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	if zModelList == nil {
@@ -190,7 +190,7 @@ func (this Methods) CompleteTask(w http.ResponseWriter, r *http.Request) {
 
 	err = this.mPersistor.UpdateTask(zListId, *zModelTask)
 	if err != nil {
-		openAPI.NewFailedTextResponse(err).ApplyTo(w)
+		openAPI.NewFailedResponse(err).ApplyTo(w)
 		return
 	}
 	openAPI.NewTextResponseUpdated("Task").ApplyTo(w)

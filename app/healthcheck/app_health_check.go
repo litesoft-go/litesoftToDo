@@ -24,12 +24,12 @@ func (this *AppHealthChecker) AsHealthCheckFunction() openAPI.HealthCheckFunctio
 	return func(pVersions []string) *openAPI.Response {
 		zCount, err := this.mPersistor.ListCount()
 		if err != nil {
-			return openAPI.NewFailedTextResponse(err)
+			return openAPI.NewFailedResponse(err)
 		}
 		zBody := HealthyBody{Lists: zCount, Versions: pVersions}
 		zBytes, err := json.Marshal(zBody)
 		if err != nil {
-			return openAPI.NewFailedTextResponse(err)
+			return openAPI.NewFailedResponse(err)
 		}
 		return openAPI.NewJsonResponseOK(string(zBytes))
 	}
